@@ -20,8 +20,8 @@ namespace Repository
             _employeeRepository = new Lazy<IEmployeeRepository>(() => new EmployeeRepository(repositoryContext));
 
         }
-        public ICompanyRepository CompanyRepository { get { return _companyRepository.Value; } }
-        public IEmployeeRepository EmployeeRepository { get {return _employeeRepository.Value; } }
+        public ICompanyRepository Company { get { return _companyRepository.Value; } }
+        public IEmployeeRepository Employee{ get {return _employeeRepository.Value; } }
         public void Save()=> _repositoryContext.SaveChanges();
 
     }
