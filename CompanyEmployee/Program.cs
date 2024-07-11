@@ -6,6 +6,8 @@ using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 LogManager.Setup().LoadConfigurationFromFile(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 // Add services to the container.
@@ -23,11 +25,16 @@ builder.Services.AddControllers()
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-    app.UseDeveloperExceptionPage();
-else
+var logger= app.Services.GetRequiredService<ILoggerManager>();
+app.ConfigureExceptionsHandler(logger);
+if (app.Environment.IsProduction())
     app.UseHsts();
+
+// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//    app.UseDeveloperExceptionPage();
+//else
+//    app.UseHsts();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
