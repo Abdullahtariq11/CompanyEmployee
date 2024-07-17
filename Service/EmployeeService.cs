@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Contracts;
 using Service.Contract;
 using AutoMapper;
+using Shared.DataTransferObjects;
+using Entities.Exceptions;
 
 namespace Service
 {
@@ -23,5 +25,34 @@ namespace Service
 
         }
 
+        public EmployeeDto GetEmployee(Guid companyId, Guid id, bool trackChanges)
+        {
+            var company = _repositoryManager.Company.GetCompany(companyId, trackChanges);
+            if (company is null)
+            {
+                throw new CompanyNotFoundException(companyId);
+            }
+            var employeeDb = _repositoryManager.Employee.GetEmployee(companyId,id, trackChanges);
+            if (employeeDb is null)
+            {
+                throw new EmployeeNotFoundException(id);
+            }
+            var employee=_mapper.Map<EmployeeDto>(employeeDb);
+            return employee;
+        }
+
+        public IEnumerable<EmployeeDto> GetEmployees(Guid companyId, bool trackChanges)
+        {
+            var company= _repositoryManager.Company.GetCompany(companyId, trackChanges);
+            if (company is null)
+            {
+                throw new CompanyNotFoundException(companyId);
+            }
+            var employeesFromDb = _repositoryManager.Employee.GetEmployees(companyId, trackChanges);
+            var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
+            return employeesDto;
+        }
+
     }
 }
+
